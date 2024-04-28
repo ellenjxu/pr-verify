@@ -16,9 +16,7 @@ outputs:
     description: "The results of the unit tests."
 
 runs:
-  using: "python"
-  main: "main.py"
-  env:
-    GITHUB_TOKEN: ${{ inputs.github_token }}
-    PR_URL: ${{ inputs.pr_url }}
-    OPENAI_API_KEY: ${{ inputs.openai_api_key }}
+  using: "docker"
+  image: "docker://python:3.8"
+  args:
+    - "main.py"
