@@ -6,7 +6,7 @@ from guardrails.hub import ValidPython
 from guardrails import Guard
 from openai import OpenAI
 from github import Github
-from pr_validator import PrValidator
+from verify import PrValidator
 
 def get_pr_data(github_token, pr_url):
     g = Github(github_token)
@@ -46,10 +46,13 @@ def get_unit_tests(desc, code, client, model="gpt-3.5-turbo") -> str:
 
         try:
             guard.validate(answer)
+            os.makedirs('pr-verify', exist_ok=True)
+            with open('pr-verify/unit_tests.py', 'w') as f:
+                f.write(answer)
             return answer
         except Exception as e:
             print("Error: ", e)
-            query = f" An error occurred: {str(e)}. Please correct the issues and generate the unit tests again.\nDescription: {desc}\nCode:\n{code}. Only return your revised code, do not return any additional information."
+            prompt = f" An error occurred: {str(e)}. Please correct the issues and generate the unit tests again.\nDescription: {desc}\nCode:\n{code}. Only return your revised code, do not return any additional information."
             continue
 
 def get_installation_commands(repo_url, branch, client, model="gpt-3.5-turbo"):
@@ -75,7 +78,7 @@ def get_installation_commands(repo_url, branch, client, model="gpt-3.5-turbo"):
 if __name__ == "__main__":
     github_token = os.getenv('GITHUB_TOKEN')
     openai_api_key = os.getenv('OPENAI_API_KEY')
-    pr_url = 'https://github.com/ellenjxu/test/pull/2'
+    pr_url = os.getenv('PR_URL')
 
     client = OpenAI(api_key=openai_api_key)
     guard = Guard().use(ValidPython, on_fail="exception") 
@@ -83,11 +86,12 @@ if __name__ == "__main__":
     # testing
     code, desc, branch = get_pr_data(github_token, pr_url) 
     unit_tests = get_unit_tests(desc, code, client, model="gpt-3.5-turbo")
-    install_cmds = get_installation_commands(pr_url, branch, client, model="gpt-3.5-turbo")
     print(unit_tests)
-    print(install_cmds)
+ 
+    # install_cmds = get_installation_commands(pr_url, branch, client, model="gpt-3.5-turbo")
+    # print(install_cmds)
 
     # run unit tests
-    validator = PrValidator(pr_url, unit_tests)
-    result = validator.validate(None, {"branch": branch, "install_cmds": install_cmds})
-    print(result)
+    # validator = PrValidator(pr_url, unit_tests)
+    # result = validator.validate(None, {"branch": branch, "install_cmds": install_cmds})
+    # print(result)
