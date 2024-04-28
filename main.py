@@ -6,7 +6,7 @@ from guardrails.hub import ValidPython
 from guardrails import Guard
 from openai import OpenAI
 from github import Github
-from verify import PrValidator
+from pr_validator import PrValidator
 
 def get_pr_data(github_token, pr_url):
     g = Github(github_token)
