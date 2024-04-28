@@ -122,12 +122,12 @@ class PrValidator(Validator):
         subprocess.run(["python", "-m", "venv", venv_path], cwd=tmp_repo)
         activate_script = os.path.join(venv_path, "bin", "activate")
         subprocess.run(metadata["install_cmds"], cwd=tmp_repo, shell=True, executable="/bin/bash")
-        # if os.path.exists(os.path.join(tmp_repo, "requirements.txt")):
-        #     pip_install_cmd = f"source {activate_script} && pip install -r requirements.txt"
-        #     print("Installing dependencies: ", pip_install_cmd)
-        #     subprocess.run(pip_install_cmd, cwd=tmp_repo, shell=True, executable="/bin/bash")
-        # else:
-        #     print("No requirements.txt found. Skipping dependency installation.")
+        if os.path.exists(os.path.join(tmp_repo, "requirements.txt")):
+            pip_install_cmd = f"source {activate_script} && pip install -r requirements.txt"
+            print("Installing dependencies: ", pip_install_cmd)
+            subprocess.run(pip_install_cmd, cwd=tmp_repo, shell=True, executable="/bin/bash")
+        else:
+            print("No requirements.txt found. Skipping dependency installation.")
 
         # test to make sure unit test code is valid
         print("Running tests on branch: ", metadata["branch"])

@@ -92,6 +92,6 @@ if __name__ == "__main__":
     # print(install_cmds)
 
     # run unit tests
-    # validator = PrValidator(pr_url, unit_tests)
-    # result = validator.validate(None, {"branch": branch, "install_cmds": install_cmds})
-    # print(result)
+    validator = PrValidator(pr_url, unit_tests)
+    result = validator.validate(None, {"branch": branch})
+    print(result)
