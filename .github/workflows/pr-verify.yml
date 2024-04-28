@@ -1,0 +1,81 @@
+name: PR-Verify
+
+on:
+  push:
+    branches:
+      - main
+  issues:
+    types: [labeled]
+  issue_comment:
+    types: [created]
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  pr-verify:
+    runs-on: ubuntu-latest
+    if: github.event.label.name == 'pr-verify'
+    steps:
+      - name: Install jq
+        run: sudo apt-get install -y jq
+      - name: Check if label was added by a collaborator
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          is_collaborator=$(curl -s -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/collaborators/${{ github.event.sender.login }}" | jq -r '.message')
+
+          if [ "$is_collaborator" == "Not Found" ]; then
+            echo "Label not added by a collaborator. Skipping action."
+            exit 78
+          fi
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }} # ${{ github.event.pull_request.head.ref }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11
+
+      # TODO: use @main instead of recloning
+      - name: Checkout external repository
+        uses: actions/checkout@v2
+        with:
+          repository: "ellenjxu/pr-verify"
+          path: "pr-verify"
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ${{ github.workspace }}/pr-verify/requirements.txt
+      - name: Run Python script from public repository
+        run: python ${{ github.workspace }}/pr-verify/main.py
+
+      # - name: Install dependencies
+      #   run: |
+      #     pwd
+      #     ls -la
+      #     python -m pip install --upgrade pip
+      #     pip install -r requirements.txt
+
+      # - name: PR-Verify
+      #   uses: ellenjxu/pr-verify@main
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     pr_url: ${{ github.event.pull_request.html_url }}
+      #     openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     PR_URL: ${{ github.event.pull_request.html_url }}
+      #     OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      # - name: Checkout unit test saved directory
+      #   run: |
+      #     cd pr-verify
+      #     pytest unit_tests
