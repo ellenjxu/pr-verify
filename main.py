@@ -12,6 +12,7 @@ def get_pr_data(github_token, pr_url):
     g = Github(github_token)
     
     repo_url = '/'.join(pr_url.split('/')[-4:-2])
+    print(repo_url)
     repo = g.get_repo(repo_url)
     pr = repo.get_pull(int(pr_url.split('/')[-1]))
     
@@ -73,12 +74,13 @@ def get_installation_commands(repo_url, branch, client, model="gpt-3.5-turbo"):
         temperature=0.5
     )
 
-    return response.choices[0].message.content.strip().split('\n') 
+    return response.choices[0].message.content.strip().split('\n')
 
 def main():
     github_token = os.getenv('GITHUB_TOKEN')
     openai_api_key = os.getenv('OPENAI_API_KEY')
-    pr_url = os.getenv('PR_URL')
+    pr_url = "https://github.com/ellenjxu/test/pull/1"
+    # pr_url = os.getenv('PR_URL')
 
     client = OpenAI(api_key=openai_api_key)
     guard = Guard().use(ValidPython, on_fail="exception") 

@@ -121,7 +121,7 @@ class PrValidator(Validator):
         venv_path = os.path.join(tmp_repo, "venv")
         subprocess.run(["python", "-m", "venv", venv_path], cwd=tmp_repo)
         activate_script = os.path.join(venv_path, "bin", "activate")
-        subprocess.run(metadata["install_cmds"], cwd=tmp_repo, shell=True, executable="/bin/bash")
+        # subprocess.run(metadata["install_cmds"], cwd=tmp_repo, shell=True, executable="/bin/bash")
         if os.path.exists(os.path.join(tmp_repo, "requirements.txt")):
             pip_install_cmd = f"source {activate_script} && pip install -r requirements.txt"
             print("Installing dependencies: ", pip_install_cmd)
