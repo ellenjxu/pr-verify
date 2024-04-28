@@ -22,3 +22,4 @@ That's it! Just add the `pr-verify` label and let PR-Verify do the rest.
 - [ ] GH actions workflow, spin up docker container (code execution sandbox)
 - [ ] automated repo installation setup (infer instructions from readme)
 - [ ] synopsis/threat analysis comment on PR
+- [ ] merging conflicts in feature branch?
