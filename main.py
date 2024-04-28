@@ -86,7 +86,7 @@ def main():
     guard = Guard().use(ValidPython, on_fail="exception") 
 
     code, desc, branch = get_pr_data(github_token, pr_url) 
-    unit_tests = get_unit_tests(desc, code, client, guard, model="gpt-3.5-turbo")
+    unit_tests = get_unit_tests(desc, code, client, guard, model="gpt-3.5-turbo") # gpt-4-turbo
     # print(unit_tests)
  
     # install_cmds = get_installation_commands(pr_url, branch, client, model="gpt-3.5-turbo")
@@ -95,8 +95,6 @@ def main():
     validator = PrValidator(pr_url, unit_tests)
     result = validator.validate(None, {"branch": branch})
     print(result)
-    # with open("pr-verify/results.txt", "w") as f:
-    #     f.write(result)
 
 if __name__ == "__main__":
    main() 

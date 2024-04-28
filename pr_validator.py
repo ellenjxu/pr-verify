@@ -115,7 +115,7 @@ class PrValidator(Validator):
             subprocess.run(["rm", "-rf", tmp_repo])
         subprocess.run(["git", "clone", base_repo_url, tmp_repo])
         subprocess.run(["git", "checkout", metadata["branch"]], cwd=tmp_repo)  # Assuming PR is fetched
-        subprocess.run(["git", "merge", "origin/main"], cwd=tmp_repo)
+        subprocess.run(["git", "merge", "origin/main", "--no-edit"], cwd=tmp_repo)
 
         # set up venv for dependencies
         venv_path = os.path.join(tmp_repo, "venv")
