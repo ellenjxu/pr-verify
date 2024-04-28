@@ -1,0 +1,24 @@
+name: "PR-Verify"
+description: "Verifies pull requests by generating and running unit tests."
+inputs:
+  github_token:
+    description: "GitHub token for accessing repository data."
+    required: true
+  pr_url:
+    description: "URL of the pull request to verify."
+    required: true
+  openai_api_key:
+    description: "OpenAI API key for generating unit tests."
+    required: true
+
+outputs:
+  test_results:
+    description: "The results of the unit tests."
+
+runs:
+  using: "python"
+  main: "main.py"
+  env:
+    GITHUB_TOKEN: ${{ inputs.github_token }}
+    PR_URL: ${{ inputs.pr_url }}
+    OPENAI_API_KEY: ${{ inputs.openai_api_key }}

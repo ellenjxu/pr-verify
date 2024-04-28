@@ -22,7 +22,7 @@ def get_pr_data(github_token, pr_url):
     
     return pr_code, pr.body, feature_branch
 
-def get_unit_tests(desc, code, client, model="gpt-3.5-turbo") -> str:
+def get_unit_tests(desc, code, client, guard, model="gpt-3.5-turbo") -> str:
     prompt = f"""
     Generate unit tests for the following PR:\nDescription: {desc}\nCode:\n{code}. The tests should only be for the code in the pull request, do not write tests for the codebase.
     
@@ -46,9 +46,9 @@ def get_unit_tests(desc, code, client, model="gpt-3.5-turbo") -> str:
 
         try:
             guard.validate(answer)
-            os.makedirs('pr-verify', exist_ok=True)
-            with open('pr-verify/unit_tests.py', 'w') as f:
-                f.write(answer)
+            # os.makedirs('pr-verify', exist_ok=True)
+            # with open('pr-verify/unit_tests.py', 'w') as f:
+            #     f.write(answer)
             return answer
         except Exception as e:
             print("Error: ", e)
@@ -75,7 +75,7 @@ def get_installation_commands(repo_url, branch, client, model="gpt-3.5-turbo"):
 
     return response.choices[0].message.content.strip().split('\n') 
 
-if __name__ == "__main__":
+def main():
     github_token = os.getenv('GITHUB_TOKEN')
     openai_api_key = os.getenv('OPENAI_API_KEY')
     pr_url = os.getenv('PR_URL')
@@ -83,15 +83,18 @@ if __name__ == "__main__":
     client = OpenAI(api_key=openai_api_key)
     guard = Guard().use(ValidPython, on_fail="exception") 
 
-    # testing
     code, desc, branch = get_pr_data(github_token, pr_url) 
-    unit_tests = get_unit_tests(desc, code, client, model="gpt-3.5-turbo")
-    print(unit_tests)
+    unit_tests = get_unit_tests(desc, code, client, guard, model="gpt-3.5-turbo")
+    # print(unit_tests)
  
     # install_cmds = get_installation_commands(pr_url, branch, client, model="gpt-3.5-turbo")
     # print(install_cmds)
 
-    # run unit tests
     validator = PrValidator(pr_url, unit_tests)
     result = validator.validate(None, {"branch": branch})
     print(result)
+    # with open("pr-verify/results.txt", "w") as f:
+    #     f.write(result)
+
+if __name__ == "__main__":
+   main() 
