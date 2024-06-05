@@ -6,6 +6,9 @@ We verify that contributor code works as intended, by generating unit tests and 
 
 > Won "Best Pear Hack" at OpenAI x PearVC hackathon.
 
+![image](https://github.com/ellenjxu/pr-verify/assets/56745453/b5ce1c1d-7d4d-4f7f-97c4-ddaab817b86f)
+
+
 ## How it works
 
 The workflow is runs on GH Actions:
@@ -14,8 +17,6 @@ The workflow is runs on GH Actions:
 2. Runner generates unit tests using for the PR, checks if it is valid Python code using guardrails
 3. Runner tests the merged code on the unit tests in subprocess sandbox
 4. Creates a synopsis (with threat score and analysis) on the PR (todo)
-
-[demo video](https://www.loom.com/share/1569250d090b434da6e64abb8c284e60?sid=58f32c61-ff5f-4d4c-8c6d-93b87cc50bed)
 
 ## Setup
 
