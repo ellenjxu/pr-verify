@@ -4,6 +4,8 @@ PR-Verify is an automated LLM agent for reviewing and verifying Github PRs.
 
 We verify that contributor code works as intended, by generating unit tests and executing the code with LLM-generated ["oracle verifiers"](https://arxiv.org/html/2305.14591v3).
 
+> Won "Best Pear Hack" at OpenAI x PearVC hackathon.
+
 ## How it works
 
 The workflow is runs on GH Actions:
